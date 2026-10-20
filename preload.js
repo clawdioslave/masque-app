@@ -15,5 +15,6 @@ if (ok) contextBridge.exposeInMainWorld("masqueApp", {
   done: () => ipcRenderer.invoke("app:done"),
   hide: () => ipcRenderer.invoke("app:hide"),
   version: () => ipcRenderer.invoke("app:version"),
+  attention: (o) => ipcRenderer.invoke("app:attention", o),
   onCharacter: (fn) => ipcRenderer.on("character", (_e, c) => fn(c)),
 });

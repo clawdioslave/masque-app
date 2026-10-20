@@ -2,7 +2,7 @@
 // It finds OBS, switches on OBS's connection for apps (no settings to change, no password to copy), restarts OBS once
 // if it has to, then runs the Masque setup inside its own window (no browser permission prompts). Afterwards it stays in
 // the menu bar so laughs and mouth shapes keep working while you stream, and starts with your Mac.
-const { app, BrowserWindow, Tray, Menu, ipcMain, shell, dialog, nativeImage, systemPreferences, session } = require("electron");
+const { app, BrowserWindow, Tray, Menu, ipcMain, shell, dialog, nativeImage, systemPreferences, session, Notification } = require("electron");
 const path = require("node:path"), fs = require("node:fs"), os = require("node:os"), crypto = require("node:crypto");
 const { execFile, spawn } = require("node:child_process");
 
@@ -181,3 +181,9 @@ ipcMain.handle("app:openSetup", (_e, { c, port, password }) => {
 ipcMain.handle("app:done", () => { store.set("setupDone", true); });
 ipcMain.handle("app:hide", () => { store.set("setupDone", true); win.hide(); if (IS_MAC) app.dock?.hide(); });
 ipcMain.handle("app:version", () => app.getVersion());
+// the user has to do something (e.g. close OBS): bring Masque to the front, over games and other windows, and say so
+ipcMain.handle("app:attention", (_e, { title, body } = {}) => {
+  show(); win.setAlwaysOnTop(true, "floating"); app.focus({ steal: true }); if (IS_MAC) app.dock?.bounce("critical");
+  setTimeout(() => win?.setAlwaysOnTop(false), 4000);
+  if (title && Notification.isSupported()) new Notification({ title, body: body || "", silent: false }).show();
+});

@@ -48,6 +48,7 @@ async function connect() {
   conn = await A.connectObs();
   if (conn.needsQuit) { // OBS is open with its connection off: it has to close once
     $("connText").textContent = "Close OBS for a moment"; $("quitHelp").hidden = false;
+    A.attention({ title: "Masque needs you for a second", body: "Close OBS (OBS menu → Quit OBS). Masque opens it again by itself." });
     while ((await A.obsStatus()).running) await new Promise((r) => setTimeout(r, 1000));
     $("quitHelp").hidden = true; $("connText").innerHTML = '<span class="spin"></span> Great. Opening OBS again and connecting…';
     conn = await A.connectObs();
