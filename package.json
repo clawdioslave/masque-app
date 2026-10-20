@@ -1,0 +1,86 @@
+{
+ "name": "masque",
+ "version": "1.0.0",
+ "description": "Masque: your character on your stream.",
+ "main": "main.js",
+ "scripts": {
+  "start": "electron .",
+  "dist": "electron-builder --mac --universal"
+ },
+ "keywords": [],
+ "author": "Clawdioslave <hello@clawdioslave.com>",
+ "license": "ISC",
+ "devDependencies": {
+  "electron": "^38.8.6",
+  "electron-builder": "^26.15.3"
+ },
+ "productName": "Masque",
+ "build": {
+  "appId": "com.clawdioslave.masque",
+  "productName": "Masque",
+  "copyright": "\u00a9 2026 Clawdioslave",
+  "files": [
+   "main.js",
+   "preload.js",
+   "wizard/**",
+   "assets/**",
+   "package.json"
+  ],
+  "protocols": [
+   {
+    "name": "Masque",
+    "schemes": [
+     "masque"
+    ]
+   }
+  ],
+  "mac": {
+   "category": "public.app-category.entertainment",
+   "icon": "assets/icon.png",
+   "target": [
+    {
+     "target": "dmg",
+     "arch": [
+      "universal"
+     ]
+    },
+    {
+     "target": "zip",
+     "arch": [
+      "universal"
+     ]
+    }
+   ],
+   "hardenedRuntime": true,
+   "gatekeeperAssess": false,
+   "entitlements": "build/entitlements.mac.plist",
+   "entitlementsInherit": "build/entitlements.mac.plist",
+   "extendInfo": {
+    "NSMicrophoneUsageDescription": "Masque listens to your voice so your character's mouth moves and it laughs when you laugh. Nothing is recorded.",
+    "NSCameraUsageDescription": "Masque can show your camera so you can pick the right one.",
+    "LSUIElement": false
+   },
+   "artifactName": "Masque-mac.${ext}"
+  },
+  "dmg": {
+   "title": "Masque",
+   "contents": [
+    {
+     "x": 150,
+     "y": 190
+    },
+    {
+     "x": 410,
+     "y": 190,
+     "type": "link",
+     "path": "/Applications"
+    }
+   ],
+   "window": {
+    "width": 560,
+    "height": 380
+   },
+   "artifactName": "Masque.dmg"
+  }
+ }
+}

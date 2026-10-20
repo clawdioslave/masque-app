@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https://clawdioslave.com https://clawdioslave-masque.clawdgross.workers.dev data:; connect-src https://clawdioslave.com https://clawdioslave-masque.clawdgross.workers.dev; style-src 'self' 'unsafe-inline'">
+<title>Masque</title>
+<link rel="stylesheet" href="wizard.css">
+</head>
+<body>
+<main>
+  <!-- 1. hello -->
+  <section class="screen" id="sHello">
+    <div class="hero"><img id="heroImg" src="../assets/hello.png" alt=""></div>
+    <h1 id="helloTitle">Let's put your character on your stream</h1>
+    <p class="lead">It takes about a minute. We'll do the fiddly parts for you.</p>
+    <button class="big" id="go">Start</button>
+  </section>
+
+  <!-- 2. OBS -->
+  <section class="screen" id="sObs" hidden>
+    <div class="step">Step 1 of 3</div>
+    <h1>First, get OBS</h1>
+    <p class="lead">OBS is the free app streamers use. Masque lives inside it.</p>
+    <ol class="steps">
+      <li><span class="num">1</span> Click the button below and download OBS for your computer.</li>
+      <li><span class="num">2</span> Install it like any app, then open it once.</li>
+      <li><span class="num">3</span> Come back here. We'll notice by ourselves.</li>
+    </ol>
+    <button class="big" id="getObs">Download OBS (free)</button>
+    <p class="waiting"><span class="spin"></span> Waiting for OBS…</p>
+  </section>
+
+  <!-- 3. connect -->
+  <section class="screen" id="sConnect" hidden>
+    <div class="step">Step 2 of 3</div>
+    <h1>Connecting to OBS</h1>
+    <p class="lead" id="connText"><span class="spin"></span> One moment…</p>
+    <div class="quit" id="quitHelp" hidden>
+      <p>OBS has to restart once so Masque can connect. Don't do this while you're live.</p>
+      <div class="menu-pic"><div class="mb"><b></b><span class="hl">OBS</span><span>File</span><span>Edit</span><span>View</span></div>
+        <div class="dd"><span>About OBS</span><span>Settings…</span><span class="hl">Quit OBS&nbsp;&nbsp;⌘Q</span></div></div>
+      <ol class="steps"><li><span class="num">1</span> Click <b>OBS</b> at the top left of your screen, then <b>Quit OBS</b>.</li>
+        <li><span class="num">2</span> If OBS asks "Are you sure?", click <b>Yes</b>.</li>
+        <li><span class="num">3</span> That's it. We open OBS again for you.</li></ol>
+      <p class="waiting"><span class="spin"></span> Waiting for OBS to close…</p>
+    </div>
+    <div class="note" id="connHelp" hidden></div>
+    <button class="big" id="connRetry" hidden>Try again</button>
+  </section>
+
+  <!-- 4. character -->
+  <section class="screen" id="sChar" hidden>
+    <div class="step">Step 3 of 3</div>
+    <h1>Who do you want to be?</h1>
+    <p class="lead">Pick one to try. You can change it any time.</p>
+    <div class="cast" id="cast"></div>
+    <div class="or">
+      <button class="ghost" id="own">Use my own picture</button>
+      <button class="ghost" id="haveOrder">I ordered a character</button>
+    </div>
+  </section>
+
+  <!-- 5. microphone -->
+  <section class="screen" id="sMic" hidden>
+    <h1>One question from your Mac</h1>
+    <div class="fake-pop">
+      <div class="fp-icon">🎙</div>
+      <div><b>"Masque" would like to access the microphone.</b><span>Click <b>Allow</b>.</span></div>
+    </div>
+    <p class="lead">Masque listens to your voice so your character's mouth moves and it laughs when you laugh. Nothing is recorded or sent anywhere.</p>
+    <button class="big" id="micOk">OK, show me</button>
+    <div class="note" id="micDenied" hidden>The microphone is switched off for Masque. Click the button, find <b>Masque</b> in the list and switch it on, then come back.
+      <button id="micSettings">Open microphone settings</button> <button class="ghost" id="micRetry">I switched it on</button></div>
+  </section>
+</main>
+
+<!-- a clear pop-up for anything that needs attention -->
+<div class="modal" id="modal" hidden>
+  <div class="card">
+    <h2 id="mTitle"></h2>
+    <p id="mText"></p>
+    <input id="mInput" hidden>
+    <div class="mbtns"><button class="ghost" id="mNo">Cancel</button><button id="mYes">OK</button></div>
+  </div>
+</div>
+<script src="wizard.js"></script>
+</body>
+</html>
