@@ -149,7 +149,8 @@ app.whenReady().then(() => {
     win.once("ready-to-show", () => win.hide()); if (IS_MAC) app.dock?.hide();
     win.loadURL(`${SITE}/masque/setup/?c=${encodeURIComponent(c)}&app=1&bg=1`);
   }
-  if (store.get("loginItem", true) && !process.env.MASQUE_TEST && app.isPackaged) app.setLoginItemSettings({ openAtLogin: true, openAsHidden: true });
+  // start with the Mac only for people who finished setup (so laughs + mouth shapes are ready for every stream)
+  if (store.get("setupDone") && store.get("loginItem", true) && !process.env.MASQUE_TEST && app.isPackaged) app.setLoginItemSettings({ openAtLogin: true, openAsHidden: true });
   app.on("activate", show);
 });
 app.on("window-all-closed", () => { if (!store.get("setupDone")) app.quit(); });
@@ -178,7 +179,7 @@ ipcMain.handle("app:openSetup", (_e, { c, port, password }) => {
   const test = process.env.MASQUE_PREFIX ? `&prefix=${encodeURIComponent(process.env.MASQUE_PREFIX)}` : ""; // test hook: builds beside the real scenes
   win.loadURL(`${process.env.MASQUE_SITE || SITE}/masque/setup/?c=${encodeURIComponent(c)}&app=1${test}`);
 });
-ipcMain.handle("app:done", () => { store.set("setupDone", true); });
+ipcMain.handle("app:done", () => { store.set("setupDone", true); if (app.isPackaged && !process.env.MASQUE_TEST) app.setLoginItemSettings({ openAtLogin: true, openAsHidden: true }); });
 ipcMain.handle("app:hide", () => { store.set("setupDone", true); win.hide(); if (IS_MAC) app.dock?.hide(); });
 ipcMain.handle("app:version", () => app.getVersion());
 // the user has to do something (e.g. close OBS): bring Masque to the front, over games and other windows, and say so

@@ -5,6 +5,11 @@ const API = "https://clawdioslave-masque.clawdgross.workers.dev", SITE = "https:
 const SAMPLES = [["wren", "Wren"], ["ember", "Ember"], ["vex", "Vex"], ["hettie", "Hettie"]];
 const charBase = (c) => (/^[up]-[a-f0-9]{12}$/.test(c) ? `${API}/u/${c}/` : `${SITE}/masque/c/${c}/`);
 let character = null, conn = null;
+// check-ins (same as the setup page): how far the first run got, so a stuck customer can be helped
+const sid = Math.random().toString(36).slice(2, 12); let appVer = "";
+A.version().then((v) => (appVer = v));
+function diag(step, detail = "") { try { fetch(`${API}/diag`, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ sid, c: character || "", app: true, ver: appVer, os: "mac", step: "app-" + step, detail: String(detail).slice(0, 300) }) }).catch(() => {}); } catch {} }
+diag("open");
 
 function show(id) { for (const s of document.querySelectorAll(".screen")) s.hidden = s.id !== id; }
 function popup({ title, text, yes = "OK", no = null, input = null }) {
@@ -34,7 +39,7 @@ $("go").onclick = () => checkObs();
 // 2 OBS installed?
 let obsPoll = null;
 async function checkObs() {
-  const st = await A.obsStatus();
+  const st = await A.obsStatus(); diag("obs-status", JSON.stringify(st));
   if (st.installed) { clearInterval(obsPoll); return connect(); }
   show("sObs");
   obsPoll ||= setInterval(checkObs, 2500);
@@ -45,13 +50,13 @@ $("getObs").onclick = () => A.downloadObs();
 async function connect() {
   show("sConnect"); $("connHelp").hidden = true; $("connRetry").hidden = true;
   $("connText").innerHTML = '<span class="spin"></span> Opening OBS and connecting. If OBS asks you anything the first time, just click through it.';
-  conn = await A.connectObs();
+  conn = await A.connectObs(); diag("connect", JSON.stringify({ ok: conn.ok, needsQuit: conn.needsQuit, why: conn.why }));
   if (conn.needsQuit) { // OBS is open with its connection off: it has to close once
     $("connText").textContent = "Close OBS for a moment"; $("quitHelp").hidden = false;
     A.attention({ title: "Masque needs you for a second", body: "Close OBS (OBS menu → Quit OBS). Masque opens it again by itself." });
     while ((await A.obsStatus()).running) await new Promise((r) => setTimeout(r, 1000));
     $("quitHelp").hidden = true; $("connText").innerHTML = '<span class="spin"></span> Great. Opening OBS again and connecting…';
-    conn = await A.connectObs();
+    conn = await A.connectObs(); diag("reconnect", JSON.stringify({ ok: conn.ok, why: conn.why }));
   }
   if (conn.ok) return character ? mic() : pickCharacter();
   $("connText").textContent = "We couldn't reach OBS.";
@@ -85,7 +90,7 @@ $("haveOrder").onclick = async () => {
 function mic() { show("sMic"); $("micDenied").hidden = true; }
 $("micOk").onclick = async () => {
   const r = await A.askMic();
-  if (r !== "granted") { $("micDenied").hidden = false; return; }
+  diag("mic", r); if (r !== "granted") { $("micDenied").hidden = false; return; }
   A.openSetup({ c: character, port: conn.port, password: conn.password });
 };
 $("micSettings").onclick = () => A.openMicSettings();

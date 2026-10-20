@@ -1,6 +1,6 @@
 {
  "name": "masque",
- "version": "1.0.0",
+ "version": "1.0.1",
  "description": "Masque: your character on your stream.",
  "main": "main.js",
  "scripts": {
@@ -19,7 +19,7 @@
  "build": {
   "appId": "com.clawdioslave.masque",
   "productName": "Masque",
-  "copyright": "\u00a9 2026 Clawdioslave",
+  "copyright": "© 2026 Clawdioslave",
   "files": [
    "main.js",
    "preload.js",
