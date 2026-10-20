@@ -75,14 +75,14 @@ function tryConnect(port, password, ms = 2500) {
 // make sure OBS's connection is on, with a password we know; restart OBS only if we really have to
 async function ensureConnection(ask) {
   const c = readWsCfg();
-  if (c && c.server_enabled && (await obsRunning())) {
+  if (c && c.server_enabled && (await obsRunning()) && !process.env.MASQUE_TEST_NEEDSQUIT) {
     const r = await tryConnect(c.server_port || 4455, c.auth_required ? c.server_password : "");
     if (r === "ok") return { ok: true, port: c.server_port || 4455, password: c.auth_required ? c.server_password : "" };
   }
   const password = c?.server_password && c.server_password.length >= 6 ? c.server_password : crypto.randomBytes(12).toString("base64url");
   const want = { ...(c || {}), alerts_enabled: false, auth_required: true, first_load: false, server_enabled: true, server_password: password, server_port: c?.server_port || 4455 };
   // OBS only reads this setting when it starts: the user closes OBS (our pop-up shows how), then we open it again
-  if (await obsRunning()) return { ok: false, needsQuit: true };
+  if (await obsRunning() || process.env.MASQUE_TEST_NEEDSQUIT) return { ok: false, needsQuit: true };
   writeWsCfg(want);
   await startObs();
   for (let i = 0; i < 60; i++) { // OBS takes a few seconds to open

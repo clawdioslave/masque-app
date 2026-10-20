@@ -5,7 +5,8 @@
  "main": "main.js",
  "scripts": {
   "start": "electron .",
-  "dist": "electron-builder --mac --universal"
+  "dist": "electron-builder --mac --universal",
+  "release": "bash scripts/release.sh"
  },
  "keywords": [],
  "author": "Clawdioslave <hello@clawdioslave.com>",
@@ -60,7 +61,8 @@
     "NSCameraUsageDescription": "Masque can show your camera so you can pick the right one.",
     "LSUIElement": false
    },
-   "artifactName": "Masque-mac.${ext}"
+   "artifactName": "Masque-mac.${ext}",
+   "notarize": true
   },
   "dmg": {
    "title": "Masque",
