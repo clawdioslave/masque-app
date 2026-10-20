@@ -8,7 +8,12 @@ export APPLE_API_KEY="$HOME/.appstoreconnect/private_keys/AuthKey_ABF7B9XBD8.p8"
 rm -rf dist
 npx electron-builder --mac --universal
 V=$(node -p "require('./package.json').version")
-spctl -a -vvv -t install dist/Masque.dmg 2>&1 | tail -3
+# the .dmg wrapper gets its own signature + notarization ticket (electron-builder only does the app inside)
+ID=$(security find-identity -v -p codesigning | sed -n 's/.*"\(Developer ID Application:[^"]*\)".*/\1/p' | head -1)
+codesign --force --sign "$ID" --timestamp dist/Masque.dmg
+xcrun notarytool submit dist/Masque.dmg --key "$APPLE_API_KEY" --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER" --wait
+xcrun stapler staple dist/Masque.dmg
+spctl -a -vvv -t open --context context:primary-signature dist/Masque.dmg 2>&1 | tail -3
 xcrun stapler validate dist/Masque.dmg
 gh release create "v$V" dist/Masque.dmg dist/Masque-mac.zip --repo clawdioslave/masque-app --title "Masque $V" --notes "Masque for Mac $V. Download from https://clawdioslave.com/masque/app/"
 echo "released v$V"
